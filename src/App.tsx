@@ -10,10 +10,13 @@ function App() {
   const handleError = (e: Error) => {
    console.log(e)
  }
- const handleScan = (e: string | null) => {
+  const handleScan = (e: string | null) => {
+   console.log(e)
    if (typeof e === "string") {
      if (checkForUnique) {
-      const index = JSON.parse(e.split("app/#/scan?a=")[1]).index
+      const main = e.split('=')[1]
+      if(main[0]==="_") return
+      const index = JSON.parse(e.split('=')[1]).index
       if(!scannedIndices.includes(index)) setScannedIndices(p => [...p, index])
     } 
      setTotal(p=>p+1)
