@@ -2,22 +2,36 @@ import './App.css';
 import QrReader from "react-qr-reader"
 import {useState} from "react"
 
+interface iQrCode {
+  index: number,
+  content: string
+}
+
 function App() {
   const [value, setValue] = useState<String|null>("")
   const [total, setTotal] = useState(0)
   const [checkForUnique, setCheckForUnique] = useState(false)
-  const [scannedIndices, setScannedIndices] = useState<Number[]>([])
+  const [sort, setSort] = useState(false)
+  const [scanned, setScanned] = useState<iQrCode[]>([])
   const handleError = (e: Error) => {
    console.log(e)
- }
+  }
   const handleScan = (e: string | null) => {
-   console.log(e)
-   if (typeof e === "string") {
+    if (typeof e === "string") {
+     console.log(e)
      if (checkForUnique) {
-      const main = e.split('=')[1]
-      if(main[0]==="_") return
-      const index = JSON.parse(e.split('=')[1]).index
-      if(!scannedIndices.includes(index)) setScannedIndices(p => [...p, index])
+       const main = e.split('=')[1]
+       if(main[0]==="_") return
+       const index = JSON.parse(e.split('=')[1]).index
+       if (!scanned.includes(index)) {
+         if (sort) {
+           setScanned((previous) =>
+             [...previous, { index, content: e }].sort((a, b) => a.index - b.index)
+           );
+         } else {
+          setScanned(p => [...p, { index, content: e }])
+         }
+       }
     } 
      setTotal(p=>p+1)
      setValue(e)
@@ -26,7 +40,8 @@ function App() {
   return (
     <div className="App">
       <button onClick={()=>setCheckForUnique(p=>!p)}>{checkForUnique?"turn off":"turn on"} checking for unique</button>
-      <span>scans - total:{total} unique:{scannedIndices.length} <br /> latest:{value}</span>
+      <button onClick={()=>setSort(p=>!p)}>{sort?"turn off":"turn on"} sorting elements</button>
+      <span>scans - total:{total} unique:{scanned.length} <br /> latest:{value}</span>
       <QrReader
         className="reader"
         delay={10}
