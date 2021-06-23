@@ -23,7 +23,7 @@ function App() {
        const main = e.split('=')[1]
        if(main[0]==="_") return
        const index = JSON.parse(e.split('=')[1]).index
-       if (!scanned.includes(index)) {
+       if (!scanned.find(el=> el.index===index)) {
          if (sort) {
            setScanned((previous) =>
              [...previous, { index, content: e }].sort((a, b) => a.index - b.index)
@@ -41,7 +41,9 @@ function App() {
     <div className="App">
       <button onClick={()=>setCheckForUnique(p=>!p)}>{checkForUnique?"turn off":"turn on"} checking for unique</button>
       <button onClick={()=>setSort(p=>!p)}>{sort?"turn off":"turn on"} sorting elements</button>
-      <span>scans - total:{total} unique:{scanned.length} <br /> latest:{value}</span>
+      <span>scans - total:{total} unique:{scanned.length}</span>
+      <br /> scanned codes:{scanned.map(e=>e.index + " ")}
+      <br /> latest:{value}
       <QrReader
         className="reader"
         delay={10}
